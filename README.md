@@ -24,7 +24,7 @@ Create a demo Web App with Docker and ACI
   az storage container create -n mystoragecontainer --connection-string %conStr%
   echo This is a test> test.txt
   az storage blob upload --account-name msistorage20210210 --connection-string %conStr% --container-name mystoragecontainer --file test.txt --name test.txt
-  az storage account update -n msistorage20210210 -g msirsgrp2021 -bypass AzureServices --default-action Deny
+  az storage account update -n msistorage20210210 -g msirsgrp2021 --bypass AzureServices --default-action Deny
   az network vnet subnet update -g msirsgrp2021 -n aci-vm-subnet2 --vnet-name aci-vm-vnet2 --service-endpoints Microsoft.Storage
   az storage account network-rule add -g msirsgrp2021 --account-name msistorage20210210 --vnet-name aci-vm-vnet2 --subnet aci-vm-subnet2
   for /f %f in ('az resource list -n myWinVM -g msirsgrp2021 --query [*].identity.principalId --out tsv') do set spID=%f
@@ -42,6 +42,6 @@ Access the Windows VM via Azure Bastion
   $response = Invoke-WebRequest -Uri 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fdatalake.azure.net%2F' -Method GET -Headers @{Metadata="true"}
   $content = $response.Content | ConvertFrom-Json
   $AccessToken = $content.access_token
-  Invoke-WebRequest -Uri https://msistorage20210210.blob.core.windows.net/mycontainer/robots.txt -Headers @{"x-ms-version"="2017-11-09"; Authorization="Bearer $AccessToken"}
-  $result = Invoke-WebRequest -Uri https://mayemsftstorage210210.blob.core.windows.net/mystoragecontainer/test.txt -Headers @{"x-ms-version"="2017-11-09"; Authorization="Bearer $AccessToken"}
+  $result = Invoke-WebRequest -Uri https://msistorage20210210.blob.core.windows.net/mystoragecontainer/test.txt -Headers @{"x-ms-version"="2017-11-09"; Authorization="Bearer $AccessToken"}
+
 ```
