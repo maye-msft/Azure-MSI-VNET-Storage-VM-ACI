@@ -67,6 +67,7 @@ Here are the scripts to build the demo
 ```
 
 ![](BlobNetworkRule.png)
+
 ![](BlobNoAccess.png)
 
 8.  #### Assign a role of 'Storage Blob Data Owner' to the VM so that it can access the Storage with the system-assigned identity. ####
