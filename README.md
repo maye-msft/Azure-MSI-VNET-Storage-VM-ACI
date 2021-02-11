@@ -22,6 +22,7 @@ Here are the scripts to build the demo
 ```Powershell
   az container create --resource-group msirsgrp2021 --name mycontainer --image mcr.microsoft.com/azuredocs/aci-helloworld --vnet aci-vm-vnet2 --vnet-address-prefix 10.0.0.0/16 --subnet aci-vm-subnet1 --subnet-address-prefix 10.0.0.0/24
 ```
+![](ACI.png)
 
 3. #### Create a subnet in Vnet and create a windows VM in the subnet, not assign a public IP, so no public access to the VM   ####
 
@@ -30,10 +31,17 @@ Here are the scripts to build the demo
   az vm create --resource-group msirsgrp2021 --name myWinVM --image win2016datacenter --admin-username azureuser --admin-password  AAbbccdd123! --vnet-name aci-vm-vnet2 --subnet aci-vm-subnet2 --public-ip-address ""
 ```
 
+![](VM.png)
+![](VNet.png)
+
+
 4. #### Enable the system-assigned identity to the VM ####
 ```Powershell
   az vm identity assign -g msirsgrp2021 -n myWinVM --identities [system]
 ```
+
+![](MI.png)
+
 
 5. #### Create a storage account ####
 
@@ -58,6 +66,9 @@ Here are the scripts to build the demo
   az storage account network-rule add -g msirsgrp2021 --account-name msistorage20210210 --vnet-name aci-vm-vnet2 --subnet aci-vm-subnet2
 ```
 
+![](BlobNetworkRule.png)
+![](BlobNoAccess.png)
+
 8.  #### Assign a role of 'Storage Blob Data Owner' to the VM so that it can access the Storage with the system-assigned identity. ####
 
 ```Powershell
@@ -75,11 +86,16 @@ Before we start the demo, we need a remote desktop connection to the Windows VM,
   az network public-ip create --resource-group msirsgrp2021 --name MyBastionIp --sku Standard --location westeurope
   az network bastion create --name MyBastion --public-ip-address MyBastionIp --resource-group msirsgrp2021 --vnet-name aci-vm-vnet2 --location westeurope  
 ```
+![](Bastion.png)
+
+Here is the screenshot of all the services in the resource group.
+![](AllServices.png)
 
 ### Demo ###
 Now we can use Bastion to access the windows VM, 
 
-1. #### We can access the ACI based Web App with a web browser in the VM via the internal IP address of the ACI. ####
+1. #### We can access the ACI based Web App with a web browser in the VM via the internal IP address (10.0.0.4) of the ACI. ####
+![](ACIWeb.png)
 
 2. #### We use the Powershell script to demostrate we can access the blob with system-assigned identity, we don't need storage key or connection string here. ####
 ```Powershell
@@ -87,7 +103,9 @@ Now we can use Bastion to access the windows VM,
   $content = $response.Content | ConvertFrom-Json
   $AccessToken = $content.access_token
   $result = Invoke-WebRequest -Uri https://msistorage20210210.blob.core.windows.net/mystoragecontainer/test.txt -Headers @{"x-ms-version"="2017-11-09"; Authorization="Bearer $AccessToken"}
-
+  $result.Content
 ```
+
+![](BlobData.png)
 
 
