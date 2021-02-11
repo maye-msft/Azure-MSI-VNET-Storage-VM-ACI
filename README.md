@@ -7,6 +7,8 @@ This is a demo to present how to apply the following Azure Services to build a s
   * Azure Virtual Netwroks (VNet)
   * Azure Managed Identities
 
+![](Architecture.png)
+
 And the aims of this demo are
   * #### With VNet, no public access of Storage, VM and ACI ####
   * #### With Managed Identities, no security key or token is need, the access_token will be get via code ####
