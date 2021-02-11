@@ -5,13 +5,13 @@ This is a demo to present how to apply the following Azure Services to build a s
   * Azure Virtual Machine (VM)
   * Azure Conatiner Instance (ACI)
   * Azure Virtual Netwroks (VNet)
-  * Azure  Managed Service Identity (MSI)
+  * Azure Managed Identities
 
 And the aims of this demo are
-  * With VNet, no public access of Storage, VM and ACI
-  * With MSI, no security key or token in the code
+  * #### With VNet, no public access of Storage, VM and ACI ####
+  * #### Managed Identities, no security key or token is need, which will be get via code ####
   
-Here is the scripts to build the demo
+Here are the scripts to build the demo
 
 1. Create the resource group
 ```
@@ -76,7 +76,8 @@ Before we start the demo, we need a remote desktop connection to the Windows VM,
   az network bastion create --name MyBastion --public-ip-address MyBastionIp --resource-group msirsgrp2021 --vnet-name aci-vm-vnet2 --location westeurope  
 ```
 
-Mow we can use Bastion to access the windows VM, 
+### Demo ###
+Now we can use Bastion to access the windows VM, 
 
 1. we can access the ACI based Web App with a web browser.
 
