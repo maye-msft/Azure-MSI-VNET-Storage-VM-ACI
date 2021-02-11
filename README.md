@@ -109,13 +109,13 @@ Now we can use Bastion to access the windows VM,
 
 ![](BlobData.png)
 
-Reference Links
-https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview
-https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/qs-configure-cli-windows-vm
-https://docs.microsoft.com/en-us/azure/container-instances/container-instances-quickstart
-https://azure.microsoft.com/en-us/services/azure-bastion/
+### Reference Links ###
+* https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview
+* https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/qs-configure-cli-windows-vm
+* https://docs.microsoft.com/en-us/azure/container-instances/container-instances-quickstart
+* https://azure.microsoft.com/en-us/services/azure-bastion/
 
-Azure CLI 
-https://docs.microsoft.com/en-us/cli/azure/network/vnet?view=azure-cli-latest
-https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest
-https://docs.microsoft.com/en-us/cli/azure/storage?view=azure-cli-latest
+### Azure CLI ### 
+* https://docs.microsoft.com/en-us/cli/azure/network/vnet?view=azure-cli-latest
+* https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest
+* https://docs.microsoft.com/en-us/cli/azure/storage?view=azure-cli-latest
