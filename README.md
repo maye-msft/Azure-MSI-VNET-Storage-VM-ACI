@@ -79,6 +79,11 @@ Here are the scripts to build the demo
   az role assignment create --assignee %spID% --role "Storage Blob Data Owner" --scope /subscriptions/10609c53-2ee3-4ff1-b438-46f7e9de2cc6/resourceGroups/msirsgrp2021/providers/Microsoft.Storage/storageAccounts/msistorage20210210
 ```
 
+
+
+
+
+
 ### Done! we have created all the services we need in this demo ###
 
 
@@ -111,13 +116,75 @@ Now we can use Bastion to access the windows VM,
 
 ![](BlobData.png)
 
+
+## Azure Function with Managed Identity to access blob ##
+
+* ### Create an Azure Function with a Storage Account ###
+```Powershell
+az storage account create -n msifuncstorage20210226 -g msirsgrp2021 --kind StorageV2 --sku Standard_LRS
+az storage container create --account-name msifuncstorage20210226 --name myblob 
+az appservice plan create -n msisrvplan20210226 -g msirsgrp2021 --is-linux --sku B1
+az functionapp create --resource-group msirsgrp2021 --consumption-plan-location westeurope --runtime python --runtime-version 3.8 --functions-version 3 --name msifunc20210226  --os-type linux --storage-account msifuncstorage20210226 
+```
+
+
+
+* ### Assign a system managed identity to the Function with Storage Blob Data Contributor role. ###
+```Powershell
+az functionapp identity assign -n msifunc20210226 -g msirsgrp2021 --role ba92f5b4-2d11-453d-a403-e96b0029c9fe --scope /subscriptions/10609c53-2ee3-4ff1-b438-46f7e9de2cc6/resourceGroups/msirsgrp2021/providers/Microsoft.Storage/storageAccounts/msifuncstorage20210226
+```
+The GUID ba92f5b4-2d11-453d-a403-e96b0029c9fe is the ID for the Storage Blob Data Contributor role. You can find all of the built-in Azure roles here: https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
+
+
+* ### Python code use managed identity to upload data to blob ###
+
+```python
+# Prepere content
+content = uuid.uuid4().hex
+local_file_name = content+'.txt'
+account_url = 'https://msifuncstorage20210226.blob.core.windows.net/'
+
+# Apply managed identity
+default_credential = DefaultAzureCredential()
+blob_service_client = BlobServiceClient(
+    account_url = account_url,
+    credential = default_credential
+)
+
+# Create blob client
+blob_client = blob_service_client.get_blob_client(container='myblob', blob=local_file_name)
+
+# Upload the created file
+blob_client.upload_blob(content, overwrite=True)
+```
+
+* ### Publish the Function, which will upload a text file with managed identity instead of access key. ###
+```
+cd Functionproj
+func azure functionapp publish msifunc20210226
+```
+
+* ### After published, access the function endpoint ###
+```
+curl https://msifunc20210226.azurewebsites.net/api/httpexample
+```
+It will return a GUID as the screenshot below, which means the data is uploaded to Storage
+
+![](azFunccurl.png)
+
+
 ### Reference Links ###
 * https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview
 * https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/qs-configure-cli-windows-vm
 * https://docs.microsoft.com/en-us/azure/container-instances/container-instances-quickstart
 * https://azure.microsoft.com/en-us/services/azure-bastion/
+* https://docs.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-python?tabs=azure-cli%2Cbash%2Cbrowser
+* https://pypi.org/project/azure-identity/1.4.0/
+* https://blog.jongallant.com/2020/02/azure-functions-blob-managed-identity-part1/
+* https://github.com/jongio/azure-blob-functions-managedid
 
 ### Azure CLI ### 
 * https://docs.microsoft.com/en-us/cli/azure/network/vnet?view=azure-cli-latest
 * https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest
 * https://docs.microsoft.com/en-us/cli/azure/storage?view=azure-cli-latest
+
